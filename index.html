@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <p>
+        #1
+        import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error
+data =pd.read_csv('BostonHousing.csv')
+print(data.head())
+print(data.count())
+print(data.isnull().sum())
+data.plot()
+plt.show()
+cov_mat=data.cov(numeric_only=True)
+corr_mat=data.corr(numeric_only=True)
+print(cov_mat)
+print(corr_mat)
+X=data.drop(['medv'],axis=1)
+y=data['medv']
+X_train,X_test,Y_train,Y_test=train_test_split(X,y,train_size=0.3,random_state=42)
+lr=LinearRegression()
+lr.fit(X_train,Y_train)
+y_pre=lr.predict(X_test)
+print(y_pre)
+mse=mean_squared_error(Y_test,y_pre)
+print(mse)
+    </p>
+
+    <br>
+    <p>
+        #2
+        # Importing necessary libraries
+import csv
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import SGDRegressor
+from sklearn.metrics import mean_squared_error
+#import dataset
+data=pd.read_csv('housing.csv')
+#print head
+print(data.head())
+#check the number of samples of each class in Species 
+count=data.count()
+print(count)
+#to print null values
+nullval=data.isnull().sum()
+print(nullval)
+#plot the graph
+data.plot()
+plt.show()
+#train and test model
+X=data.drop(['median_house_value'],axis=1)
+y=data["median_house_value"]
+X_encoded=pd.get_dummies(X,columns=["ocean_proximity"])
+X_encoded.fillna(data["total_bedrooms"].mean(),inplace=True)
+X_train,X_test,Y_train,Y_test=train_test_split(X_encoded,y,test_size=0.09,random_state=42)
+#load the model
+model=SGDRegressor()
+model.fit(X_train,Y_train)
+#predicting values
+y_pred=model.predict(X_test)
+print(y_pred)
+#accuracy 
+mse=mean_squared_error(Y_test,y_pred)
+print(mse)
+# a=1-(mse/np.var(Y_test))
+# print(a)
+    </p>
+    <br>
+    <p>
+        #3
+        #Logostic Regrassion
+import csv
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+#loding dataset
+data=pd.read_csv('IRIS.csv')
+#display first 5 row
+print(data.head())
+#number of samples in each col
+sam=data.count()
+print(sam)
+#checking null values
+print(data.isnull().sum())
+#to check any null value
+print(data.isnull().any())
+cov_mat=data.cov(numeric_only=True)
+corr_mat=data.corr(numeric_only=True)
+print(cov_mat)
+print(corr_mat)
+#no need of id so drop it
+data=data.drop(['ID'],axis=1)
+print(data.head())
+#data visulation
+data.plot()
+plt.show()
+#coverance and coorlelatin
+cov_mat=data.cov(numeric_only=True)
+print(cov_mat)
+#train and test model
+X=data.drop(['Species'],axis=1)
+Y=data["Species"]
+X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.2,random_state=10)
+#loding model
+model=LogisticRegression()
+model.fit(X_train,Y_train)
+y_pred=model.predict(X_test)
+print(y_pred)
+a=accuracy_score(Y_test,y_pred)
+print(a)
+    </p>
+    <br>
+    <p>
+        #4
+        import pandas as pd
+import numpy as np
+data=pd.read_csv('enjoysport.csv.csv')
+#take all col except last one cos its my target;
+concept=np.array(data)[:,:-1]
+print(concept)
+# take target now
+target=np.array(data)[:,-1]
+print(target)
+specific_h=concept[0]
+def train(con,tar):
+    # # specif?ic_h=[]
+    # for i,val in enumerate(tar):
+    #     if val=='Yes':
+    #         specific_h = con[i].copy()
+    #         break
+            
+    for i,val in enumerate(con):
+        if tar[i]=='Yes':
+            for x in range(len(specific_h)):
+                if val[x] != specific_h[x]:
+                    specific_h[x] = '?'
+                
+    return specific_h
+# print(train(concept,target))    
+train(concept,target)
+    </p>
+    <br>
+    <p>
+        import numpy as np
+import pandas as pd
+data=pd.read_csv('enjoysport.csv.csv')
+print(data)
+concepts=np.array(data)[:,:-1]
+target=np.array(data)[:,-1]
+def learn(concepts, target):
+    '''
+    learn() function implements the learning method of the Candidate elimination algorithm.
+    Arguments:
+        concepts - a data frame with all the features
+        target - a data frame with corresponding output values
+    '''
+
+    # Initialise S0 with the first instance from concepts
+    # .copy() makes sure a new list is created instead of just pointing to the same memory location
+    specific_h = concepts[0].copy()
+    print("\nInitialization of specific_h and general_h")
+    print(specific_h)
+
+    general_h = [["?" for i in range(len(specific_h))] for i in range(len(specific_h))]
+    print(general_h)
+    # The learning iterations
+    for i, h in enumerate(concepts):
+
+        # Checking if the hypothesis has a positive target
+        if target[i] == "Yes":
+            for x in range(len(specific_h)):
+
+                # Change values in S & G only if values change
+                if h[x] != specific_h[x]:
+                    specific_h[x] = '?'
+                    general_h[x][x] = '?'
+
+        # Checking if the hypothesis has a negative target
+        if target[i] == "No":
+            for x in range(len(specific_h)):
+                # For negative hypothesis, change values only in G
+                if h[x] != specific_h[x]:
+                    general_h[x][x] = specific_h[x]
+                else:
+                    general_h[x][x] = '?'
+
+        print("\nSteps of Candidate Elimination Algorithm", i + 1)
+        print(specific_h)
+        print(general_h)
+
+    # find indices where we have empty rows, meaning those that are unchanged
+    indices = [i for i, val in enumerate(general_h) if val == ['?', '?', '?', '?', '?', '?']]
+    for i in indices:
+        # remove those rows from general_h
+        general_h.remove(['?', '?', '?', '?', '?', '?'])
+    # Return final values
+    return specific_h, general_h
+
+s_final, g_final = learn(concepts, target)
+print("\nFinal Specific_h:", s_final, sep="\n")
+print("\nFinal General_h:", g_final, sep="\n")
+    </p>
+    <br>
+    <p>
+        #6 
+        import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import plot_tree
+data=pd.read_csv("PlayTennis.csv")
+print(data)
+data.head()
+X=data.drop('PlayTennis',axis=1)
+Y=data["PlayTennis"]
+X_encoded=pd.get_dummies(X)
+X_train,X_test,y_train,y_test=train_test_split(X_encoded,Y,test_size=0.3,random_state=101)
+dfc=DecisionTreeClassifier(criterion='entropy')
+dfc.fit(X_train,y_train)
+new_sample = X_test.iloc[[0]]
+print(new_sample)
+predicted_class = dfc.predict(new_sample)
+print(predicted_class)
+print("Predicted class for the new sample:", predicted_class[0])
+plt.figure(figsize=(25, 20))
+plot_tree(dfc, feature_names=X_encoded.columns, class_names=['No', 'Yes'])
+plt.show()
+    </p>
+    <br>
+    <p>
+        #7 
+        from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+
+# English text and corresponding labels
+data = [
+    ("I love this sandwich", 'pos'),
+    ("This is an amazing place", 'pos'),
+    ("I feel very good about these cheese", 'pos'),
+    ("This is my best work", 'pos'),
+    ("What an awesome view", 'pos'),
+    ("I do not like this restaurant", 'neg'),
+    ("I am tired of this stuff", 'neg'),
+    ("I can’t deal with this", 'neg'),
+    ("He is my sworn enemy", 'neg'),
+    ("My boss is horrible", 'neg'),
+    ("This is an awesome place", 'pos'),
+    ("I do not like the taste of this juice", 'neg'),
+    ("I love to dance", 'pos'),
+    ("I am sick and tired of this place", 'neg'),
+    ("What a great holiday", 'pos'),
+    ("That is a bad locality to stay", 'neg'),
+    ("We will have good fun tomorrow", 'pos'),
+    ("I went to my enemy's house today", 'neg')
+]
+
+# Separate data into text and labels
+text_data, labels = zip(*data)
+
+# Create a bag-of-words representation of the text data
+vectorizer = CountVectorizer()
+X = vectorizer.fit_transform(text_data)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, labels, test_size=0.2, random_state=42)
+
+# Train a naive Bayes classifier
+classifier = MultinomialNB()
+classifier.fit(X_train, y_train)
+
+# Predict labels for the test set
+y_pred = classifier.predict(X_test)
+
+# Calculate metrics
+total_instances = len(y_test)
+accuracy = metrics.accuracy_score(y_test, y_pred)
+recall = metrics.recall_score(y_test, y_pred, pos_label='pos')
+precision = metrics.precision_score(y_test, y_pred, pos_label='pos')
+confusion_matrix = metrics.confusion_matrix(y_test, y_pred)
+
+# Print the results
+print("1. Total Instances of Dataset:", total_instances)
+print("2. Accuracy:", accuracy)
+print("3. Recall:", recall)
+print("4. Precision:", precision)
+print("5. Confusion Matrix:")
+print(confusion_matrix)
+
+    </p>
+    <br>
+    <p>
+        #8
+        import pandas as pd
+import numpy as np
+from sklearn.cluster import KMeans
+data = {
+ 'VAR1': [1.713, 0.180, 0.353, 0.940, 1.486, 1.266, 1.540, 0.459, 0.773],
+ 'VAR2': [1.586, 1.786, 1.240, 1.566, 0.759, 1.106, 0.419, 1.799, 0.186],
+ 'CLASS': [0, 1, 1, 0, 1, 0, 1, 1, 1]
+}
+df = pd.DataFrame(data)
+X = df[['VAR1', 'VAR2']]
+kmeans_model = KMeans(n_clusters=3, random_state=42)
+kmeans_model.fit(X)
+new_case = np.array([[0.906, 0.606]])
+predicted_cluster = kmeans_model.predict(new_case)
+print("Predicted cluster for the new case:", predicted_cluster[0])
+    </p>
+    <br>
+    <p>
+        #9
+        import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+data=pd.read_csv('IRIS.csv')
+print(data)
+X=data.drop('Species',axis=1)
+Y=data['Species']
+X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.2,random_state=42)
+knn=KNeighborsClassifier()
+knn.fit(X_train,Y_train)
+y_pred=knn.predict(X_test)
+from sklearn.metrics import accuracy_score
+print(accuracy_score(Y_test,y_pred))
+    </p>
+    <br>
+    <p>
+        #10
+        import csv
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error
+data =pd.read_csv('housing.csv')
+print(data.head())
+print(data.count())
+print(data.isnull().sum())
+print(data.isnull().any())
+X=data.drop(['median_house_value'],axis=1)
+y=data['median_house_value']
+X_encoded=pd.get_dummies(X,columns=['ocean_proximity'])
+X_encoded.fillna(data["total_bedrooms"].mean(),inplace=True)
+X_train,X_test,Y_train,Y_test=train_test_split(X_encoded,y,test_size=0.3,random_state=42)
+svm=RandomForestRegressor()
+svm.fit(X_train,Y_train)
+y_pre=svm.predict(X_test)
+print(y_pre)
+mse=mean_squared_error(Y_test,y_pre)
+print(mse)
+a=1-(mse/np.var(Y_test))
+print(a)
+    </p>
+    <br>
+    <p>
+        #11
+        import numpy as np
+import matplotlib.pyplot as plt
+import statsmodels.api as sm
+
+# Generate a dataset with the sin function and some noise
+np.random.seed(42)
+x = np.sort(5 * np.random.rand(100))
+y = np.sin(x) + 0.2 * np.random.randn(100)
+
+# Apply Locally Weighted Regression (LOWESS)
+lowess = sm.nonparametric.lowess(y, x, frac=0.3)
+
+# Plot the original data and the LOWESS fit
+plt.scatter(x, y, color='blue', label='Original Data')
+plt.plot(lowess[:, 0], lowess[:, 1], color='red', label='Locally Weighted Regression')
+plt.title('Locally Weighted Regression (LOWESS)')
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.legend()
+plt.show()
+    </p>
+    <br>
+    <p>
+        #12
+        import csv
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+data=pd.read_csv('IRIS.csv')
+X=data.drop('Species',axis=1)
+Y=data['Species']
+X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.3,random_state=42)
+svm=SVC()
+svm.fit(X_train,Y_train)
+y_pred=svm.predict(X_test)
+print(y_pred)
+print(accuracy_score(Y_test,y_pred))
+    </p>
+</body>
+</html>
